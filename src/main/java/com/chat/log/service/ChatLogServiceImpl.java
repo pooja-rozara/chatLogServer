@@ -33,7 +33,18 @@ public class ChatLogServiceImpl implements ChatLogService{
 		if(msg.isEmpty()) {
 			throw new UserNotFound("No record for this user");
 		}
-		return msg.stream().sorted(Comparator.comparingLong(Message::getTimeStamp)).map(m->m.getMessage()).limit(limit!=null?limit:10).collect(Collectors.toList());
+		List<Message> msgs= msg.stream().sorted(Comparator.comparingLong(Message::getTimeStamp)).limit(limit!=null?limit:10).collect(Collectors.toList());
+		int index=0;
+		if(messageId!=null) {
+		for(int i=0;i<msgs.size();i++) {
+			if(msgs.get(i).getMessageId()==messageId) {
+				index=i;
+				break;
+			}
+		}
+		msgs= msgs.subList(index, msgs.size());
+		}
+		return msg.stream().map(m->m.getMessage()).collect(Collectors.toList());
 	}
 
 	@Override
